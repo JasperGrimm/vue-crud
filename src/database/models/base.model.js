@@ -29,6 +29,23 @@ class BaseModel {
     return this.constructor.name.toLowerCase()
   }
 
+  isRelation (field) {
+    const type = this.schema[field]
+    return type.hasOwnProperty('ref')
+  }
+
+  getRelation (field) {
+    if (this.isRelation(field)) {
+      const key = this.data[field]
+      const model = this.schema[ field ].ref
+      if (typeof model === 'function') { // @TODO Only One-To-One supported now!
+        const ref = model.find(key)
+        return ref
+      }
+    }
+    return null
+  }
+
   static _proxy (instance) {
     if (typeof Proxy === 'undefined') {
       return instance
@@ -40,6 +57,9 @@ class BaseModel {
           return obj.data
         }
         if (!obj[name]) {
+          if (obj.isRelation(name)) {
+            return obj.getRelation(name)
+          }
           return obj.data[name]
         } else {
           return obj[name]

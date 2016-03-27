@@ -19,7 +19,7 @@ user.setData({
 })
 user.save()
 
-console.log(user.city)
+console.log(user.city.name)
 
 // let users = models.User.findBy({})
 // console.log(users)
