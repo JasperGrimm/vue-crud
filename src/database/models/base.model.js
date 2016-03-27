@@ -31,6 +31,7 @@ class BaseModel {
 
   isRelation (field) {
     const type = this.schema[field]
+    if (typeof type === 'undefined') return false
     return type.hasOwnProperty('ref')
   }
 
@@ -60,7 +61,13 @@ class BaseModel {
           if (obj.isRelation(name)) {
             return obj.getRelation(name)
           }
-          return obj.data[name]
+          if (obj.data === null) {
+            obj.data = {}
+          }
+          if (typeof obj.data[name] !== 'undefined') {
+            return obj.data[name]
+          }
+          return null
         } else {
           return obj[name]
         }
