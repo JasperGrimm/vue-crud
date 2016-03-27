@@ -20,6 +20,20 @@ model2.save()
 let model3 = models.User.find(1)
 console.log(model3.name)
 
+let model4 = models.User.findBy({
+  name: 'Eugen'
+})
+console.log(model4)
+
+let model5 = models.User.create()
+model5.setData({
+  id: 5,
+  name: 'Eugen'
+})
+model5.save()
+
+
+
 export default {
   TableList: TableList
 }

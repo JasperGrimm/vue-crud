@@ -15,6 +15,10 @@ class DataDriver {
   remove (key) {
 
   }
+
+  findBy (predicate) {
+
+  }
 }
 
 export default DataDriver

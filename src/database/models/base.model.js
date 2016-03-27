@@ -23,18 +23,6 @@ class BaseModel {
     return this.constructor.name.toLowerCase()
   }
 
-  constructor (data = null) {
-    this.data = data
-  }
-
-  setData (data) {
-    this.data = data
-  }
-
-  static create_key (key) {
-    return `${this.name.toLowerCase()}_${key}`
-  }
-
   static _proxy (instance) {
     let proxy = new Proxy(instance, {
       get: function (proxy, name) {
@@ -55,13 +43,29 @@ class BaseModel {
 
   static find (key) {
     let instance = new this()
-    instance.setData(this.db.get(this.create_key(key)))
+    instance.setData(this.db.get(this.name, key))
     return this._proxy(instance)
   }
 
+  static findBy (predicate) {
+    let self = this
+    return this.db.findBy(this.name, predicate).map((item) => {
+      const instance = self.create()
+      instance.setData(item)
+      return instance
+    })
+  }
+
+  constructor (data = null) {
+    this.data = data
+  }
+
+  setData (data) {
+    this.data = data
+  }
+
   save () {
-    const key = `${this.entity_name}_${this.data.id}`
-    this.db.set(key, this.data)
+    this.db.set(this.entity_name, this.data)
   }
 
   remove () {

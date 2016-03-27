@@ -35,7 +35,12 @@
         hasErrors: true
       }
     },
-    props: ['items'],
+    props: ['model'],
+    computed: {
+      items: function () {
+
+      }
+    },
     components: {
       vsAlert: components.alert,
       vsTable: components.tables
