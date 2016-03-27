@@ -2,8 +2,14 @@
  * Created by vestnik on 27/03/16.
  */
 import DataDriver from '../driver/driver.base'
+import { log } from './../../utils'
 
 class BaseModel {
+  constructor () {
+    this.data = {}
+    this.schema = {}
+  }
+
   get db () {
     return this.constructor._db
   }
@@ -24,13 +30,30 @@ class BaseModel {
   }
 
   static _proxy (instance) {
+    if (typeof Proxy === 'undefined') {
+      return instance
+    }
     let proxy = new Proxy(instance, {
-      get: function (proxy, name) {
-        if (!proxy[name]) {
-          return proxy.data[name]
-        } else {
-          return proxy[name]
+      get: function (obj, name) {
+        if (name === 'data') {
+          if (!obj.data) obj.data = {}
+          return obj.data
         }
+        if (!obj[name]) {
+          return obj.data[name]
+        } else {
+          return obj[name]
+        }
+      },
+      set: function (obj, name, value) {
+        if (name === 'data') {
+          obj.data = value
+          return true
+        }
+        if (obj.schema.hasOwnProperty(name)) {
+          obj.data[name] = value
+        }
+        return value
       }
     })
     return Object.create(proxy)
@@ -56,15 +79,24 @@ class BaseModel {
     })
   }
 
-  constructor (data = null) {
-    this.data = data
-  }
-
   setData (data) {
     this.data = data
   }
 
   save () {
+    for (let [field, type] of Object.entries(this.schema)) {
+      if (type.hasOwnProperty('ref')) {
+        log('This is relational field')
+        if (typeof type.ref !== 'function') {
+          // log('This is to-many relation')
+        } else {
+          const ref_item = this.data[field]
+          ref_item.save() // save references
+          const ref_schema = ref_item.schema
+          this.data[field] = this.data[field][ref_schema._primary]
+        }
+      }
+    }
     this.db.set(this.entity_name, this.data)
   }
 

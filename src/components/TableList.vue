@@ -6,18 +6,12 @@
     <table>
       <thead>
       <tr>
-        <th>#</th>
-        <th>First Name</th>
-        <th>Last Name</th>
-        <th>Username</th>
+        <th v-for="field in fields" track-by="$index">{{ field }}</th>
       </tr>
       </thead>
       <tbody>
-      <tr>
-        <th scope="row">1</th>
-        <td>Mark</td>
-        <td>Otto</td>
-        <td>@mdo</td>
+      <tr v-for="item in items" track-by="$index">
+        <td v-for="field in fields" track-by="$index">{{ item[field] }}</td>
       </tr>
       </tbody>
     </table>
@@ -35,12 +29,7 @@
         hasErrors: true
       }
     },
-    props: ['model'],
-    computed: {
-      items: function () {
-
-      }
-    },
+    props: ['model', 'items', 'fields'],
     components: {
       vsAlert: components.alert,
       vsTable: components.tables

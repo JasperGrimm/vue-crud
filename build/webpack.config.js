@@ -1,15 +1,23 @@
 var path = require('path')
 var webpack = require('webpack')
+var cssLoaders = require('./css-loaders')
 
 module.exports = {
   entry: './src/main.js',
   output: {
-    path: path.resolve(__dirname, './dist'),
+    path: path.resolve(__dirname, '../dist'),
     filename: 'build.js',
     libraryTarget: 'umd'
   },
+  resolve: {
+    extensions: ['', '.js', '.vue'],
+    fallback: [path.join(__dirname, '../node_modules')],
+    alias: {
+      'src': path.resolve(__dirname, '../src')
+    }
+  },
   resolveLoader: {
-    root: path.join(__dirname, 'node_modules'),
+    root: path.join(__dirname, '../node_modules'),
   },
   module: {
     preLoaders: [
@@ -51,6 +59,9 @@ module.exports = {
         }
       }
     ]
+  },
+  vue: {
+    loaders: cssLoaders()
   },
   eslint: {
     formatter: require('eslint-friendly-formatter')
