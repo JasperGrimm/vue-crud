@@ -19,6 +19,9 @@ module.exports = {
   resolveLoader: {
     root: path.join(__dirname, '../node_modules'),
   },
+  themeLoader: {
+    themes: ['../node_modules/vuestrap/theme/bootstrap.scss'], // docs theme, default bootstrap
+  },
   module: {
     preLoaders: [
       {
@@ -57,6 +60,10 @@ module.exports = {
           limit: 10000,
           name: '[name].[ext]?[hash]'
         }
+      },
+      {
+        test: /\.scss$/,
+        loader: 'style-loader!css-loader!autoprefixer-loader!sass-loader!vuestrap-theme-loader'
       }
     ]
   },
